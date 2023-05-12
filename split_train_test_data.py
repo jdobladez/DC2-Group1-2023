@@ -3,8 +3,10 @@ import pandas as pd
 
 # TODO only needs to be run once!!
 
-# Constants
-train_percentage = 0.8  # Percentage of train data as a decimal number, test data is 1 - train_percentage
+# Constants - the sum of all should be 1
+train_percentage = 0.7
+validation_percentage = 0.1
+test_percentage = 0.2
 
 
 def split_train_test_data(train_percentagex):
@@ -12,22 +14,28 @@ def split_train_test_data(train_percentagex):
     df = pd.read_csv("burglary_data.csv")
 
     # Create index number to split on
-    split_border = len(df) * train_percentagex
+    split_border_train_valid = len(df) * train_percentagex
+    split_border_valid_test = len(df) * validation_percentage
 
     # Split df into train and test data set
-    df_training = df[:math.floor(split_border)]
-    df_test = df[math.ceil(split_border):]
+    df_training = df[:math.floor(split_border_train_valid)]
+    df_test_and_validation = df[math.ceil(split_border_train_valid):]
+
+    # Split validation and test df into separate df
+    df_validation = df_test_and_validation[:math.floor(split_border_valid_test)]
+    df_test = df_test_and_validation[math.ceil(split_border_valid_test):]
 
     # Remove duplicated data
     # Should not be the case here but have to double check
 
-    # Convert df training to csv
+    # Convert df to csv
     df_training.to_csv('burglary_train.csv')
-
-    # Convert df test to csv
+    df_validation.to_csv("burglary_validation.csv")
     df_test.to_csv('burglary_test.csv')
 
+    print("Df len: ", len(df))
     print("Train len: ", len(df_training))
+    print("Validation len: ", len(df_validation))
     print("Test len: ", len(df_test))
 
 
