@@ -25,6 +25,8 @@ def merge_csv_files(path, output_file_name):
             df_csv = pd.read_csv(file_path)
             df_csv_concat = pd.concat([df_csv_concat, df_csv], ignore_index=True)
             print("\n" + file + " has been merged")
+    df_csv_concat = df_csv_concat.loc[df_csv_concat["Crime type"] == "Burglary"]
+    df_csv_concat = df_csv_concat.loc[(df_csv_concat["LSOA name"] == "NaN") | df_csv_concat["LSOA name"].str.contains("Barnet", case=False)]
     df_csv_concat.to_csv(output_file_name, index=False)
     print("The merge data has been saved as " + output_file_name + " in " + str(os.getcwd()))
     return df_csv_concat
@@ -43,13 +45,11 @@ df = df.drop(['Context', 'Type', 'Date', 'Part of a policing operation', "Polici
               "Outcome linked to object of search", "Removal of more than just outer clothing", "Outcome type",
               "Falls within"], axis=1)
 
-df.to_csv("deleted_col.csv", index=False)
-print("Columns have been deleted from data and saved into a new file: deleted_col.csv")
 
-df1 = df.loc[df["Crime type"] == "Burglary"]
-
-df1 = df1.dropna(subset=['Latitude', 'Longitude', 'LSOA code', 'LSOA name'])
+df1 = df.dropna(subset=['Latitude', 'Longitude', 'LSOA code', 'LSOA name'])
 
 df1 = df1[df1["LSOA name"].str.contains("Barnet", case=False)]
 
 df1.to_csv("burglary_data.csv", index=False)
+
+print("\n" + "File for burglary data in Barnet without NAN values and removed columns saved as: burglary_data.csv")
