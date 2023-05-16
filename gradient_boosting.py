@@ -109,39 +109,3 @@ for lr, v, t in reports:
     print("Testing set performance:")
     print(t)
 
-
-# Extract validation reports, and testing reports from the reports
-validation_reports = [v for _, v, _ in reports]
-testing_reports = [t for _, _, t in reports]
-
-# Define the metrics to plot
-metrics = ['precision', 'recall', 'f1-score']
-
-# Iterate over the metrics
-for metric in metrics:
-    # Get the scores for validation and testing datasets
-    validation_scores = [report[metric] for report in validation_reports]
-    testing_scores = [report[metric] for report in testing_reports]
-
-    # Set the positions of the bars on the x-axis
-    x = range(len(validation_scores))
-
-    # Plot the bars
-    plt.figure()
-    plt.bar(x, validation_scores, color='olivedrab', label='Validation')
-    plt.bar(x, testing_scores, color='cadetblue', label='Testing', alpha=0.5)
-
-    # Add x-axis ticks and labels
-    plt.xticks(x, learning_rates)
-
-    # Add labels and title
-    plt.xlabel('Learning Rate')
-    plt.ylabel(metric.capitalize())
-    plt.title(f'{metric.capitalize()} for Different Learning Rates')
-    plt.legend()
-
-    # Show the plot
-    plt.show()
-
-
-
