@@ -94,9 +94,6 @@ for lr in learning_rates:
     ax.set_title(f'Confusion matrix for learning rate {lr}')
     plt.show()
 
-    # Save the plots
-    plt.savefig(f'conf_mat_lr_{lr}.png')
-
     # Print running time taken per learning rate
     end_time = time.time()
     print('\n' + f"Running time for learning rate {lr}: {(end_time - start_time)/60:.2f} minutes\n")
