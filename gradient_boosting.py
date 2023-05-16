@@ -73,13 +73,13 @@ for lr in learning_rates:
     # Evaluate model on validation dataset
     print("\n"+"Model is predicting the validation dataset")
     y_val_pred = gb.predict(x_val)
-    val_report = classification_report(y_val, y_val_pred)
+    val_report = classification_report(y_val, y_val_pred, zero_division=0)
     print("Model was evaluated on validation dataset")
 
     # Evaluate model on testing dataset
     print("\n"+"Model is predicting the test dataset")
-    y_pred = gb.predict(y_test)
-    test_report = classification_report(y_test, y_pred)
+    y_pred = gb.predict(x_test)
+    test_report = classification_report(y_test, y_pred, zero_division=0)
     print("Model was evaluated on testing dataset")
 
     # Store the reports for each learning rate
@@ -99,7 +99,7 @@ for lr in learning_rates:
 
     # Print running time taken per learning rate
     end_time = time.time()
-    print('\n' + f"Running time for learning rate {lr}: {end_time - start_time:.2f} seconds\n")
+    print('\n' + f"Running time for learning rate {lr}: {(end_time - start_time)/60:.2f} minutes\n")
 
 # Print the results
 for lr, v, t in reports:
@@ -108,5 +108,40 @@ for lr, v, t in reports:
     print(v)
     print("Testing set performance:")
     print(t)
+
+
+# Extract validation reports, and testing reports from the reports
+validation_reports = [v for _, v, _ in reports]
+testing_reports = [t for _, _, t in reports]
+
+# Define the metrics to plot
+metrics = ['precision', 'recall', 'f1-score']
+
+# Iterate over the metrics
+for metric in metrics:
+    # Get the scores for validation and testing datasets
+    validation_scores = [report[metric] for report in validation_reports]
+    testing_scores = [report[metric] for report in testing_reports]
+
+    # Set the positions of the bars on the x-axis
+    x = range(len(validation_scores))
+
+    # Plot the bars
+    plt.figure()
+    plt.bar(x, validation_scores, color='olivedrab', label='Validation')
+    plt.bar(x, testing_scores, color='cadetblue', label='Testing', alpha=0.5)
+
+    # Add x-axis ticks and labels
+    plt.xticks(x, learning_rates)
+
+    # Add labels and title
+    plt.xlabel('Learning Rate')
+    plt.ylabel(metric.capitalize())
+    plt.title(f'{metric.capitalize()} for Different Learning Rates')
+    plt.legend()
+
+    # Show the plot
+    plt.show()
+
 
 
