@@ -11,6 +11,10 @@ def split_train_test_data(train_percentagex):
     # Import df from csv - already sorted on timestamp so no need to sort
     df = pd.read_csv("burglary_data.csv")
 
+    # Convert month to datetime and sort ascending
+    # df['Month'] = pd.to_datetime(df['Month'], format="%Y-%m")
+    df.sort_values(by='Month', inplace=True)
+
     # Create index number to split on
     split_border = len(df) * train_percentagex
 
@@ -29,6 +33,6 @@ def split_train_test_data(train_percentagex):
 
     print("Train len: ", len(df_training))
     print("Test len: ", len(df_test))
-
+    
 
 split_train_test_data(train_percentage)
