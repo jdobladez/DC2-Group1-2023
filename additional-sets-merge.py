@@ -1,14 +1,21 @@
 import pandas as pd
 
 
-def add_files_to_git():
-    df_median_prices = pd.read_csv(
-        "D:\\OneDrive\\Universiteit\\Year 2\\Q4\\JBG050 (Data Challenge 2)\\Median house prices by ward\\Barnet - Median price paid by ward.csv", encoding= 'unicode_escape')
-    df_ward_profiles = pd.read_csv(
-        "D:\\OneDrive\\Universiteit\\Year 2\\Q4\\JBG050 (Data Challenge 2)\\ward-profiles-excel-version.csv", encoding= 'unicode_escape')
+def merge_files():
+    df_median_prices = pd.read_csv("house_median_prices.csv", sep=",")
+    df_ward_profiles = pd.read_csv("ward_profiles.csv", sep=",")
 
-    df_median_prices.to_csv('house_median_prices.csv')
-    df_ward_profiles.to_csv('ward_profiles.csv')
+    df_median_prices = df_median_prices.drop(columns="Unnamed: 0")
+
+    # df_median_prices.to_csv('house_median_prices.csv')
+
+    df_min_max = df_median_prices.agg(['min', 'max'])
+    # df_min_max = df_min_max.drop(columns=["Local authority code", "Local authority name"])
+
+    print(df_min_max.head())
+    print(df_median_prices.head())
+
+    # print(df_median_prices.columns.values.tolist())
 
 
-
+merge_files()
