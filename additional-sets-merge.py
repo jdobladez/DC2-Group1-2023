@@ -2,16 +2,12 @@ import numpy as np
 import pandas as pd
 
 
-def merge_files():
+def merge_median_house_prices():
     # Load csv files
-    df_median_prices = pd.read_csv("house_median_prices.csv", sep=",")
-    df_ward_profiles = pd.read_csv("ward_profiles.csv", sep=",")
-    df_train = pd.read_csv("burglary_train.csv")
+    df_median_prices = pd.read_csv("house_median_prices.csv", sep=",", index_col=0)
+    df_train = pd.read_csv("burglary_train.csv", index_col=0)
 
-    # Drop weird column
-    df_median_prices = df_median_prices.drop(columns="Unnamed: 0")
-
-    df_min_max = df_median_prices.agg(['min', 'max'])
+    # df_min_max = df_median_prices.agg(['min', 'max'])
     # df_min_max = df_min_max.drop(columns=["Local authority code", "Local authority name"])
 
     # Calculate the mean for every row in columns that contain numbers
@@ -31,11 +27,12 @@ def merge_files():
     df_train["House price in low range"] = df_median_prices['Below 33%']
     df_train['House price in high range'] = df_median_prices['Above 66%']
 
-    print(df_min_max.head())
     print(df_median_prices.head())
+    print(df_train.head())
 
     # print(df_median_prices.columns.values.tolist())
-    # df_median_prices.to_csv('house_median_prices.csv')
+    df_median_prices.to_csv('house_median_prices.csv')
+    df_train.to_csv("burglary_train_merged")
 
 
-merge_files()
+merge_median_house_prices()
