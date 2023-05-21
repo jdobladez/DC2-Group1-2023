@@ -27,12 +27,44 @@ def merge_median_house_prices():
     df_train["House price in low range"] = df_median_prices['Below 33%']
     df_train['House price in high range'] = df_median_prices['Above 66%']
 
-    print(df_median_prices.head())
-    print(df_train.head())
+    # print(df_median_prices.head())
+    # print(df_train.head())
+
+    median_prices_subset = df_median_prices["Ward name", "Below 33%", "Above 66%"]
 
     # print(df_median_prices.columns.values.tolist())
-    df_median_prices.to_csv('house_median_prices.csv')
-    df_train.to_csv("burglary_train_merged")
+    df_median_prices.to_csv('house_median_prices.csv', index=False)
+    df_train.to_csv("burglary_train_merged.csv")
 
 
-merge_median_house_prices()
+def merge_ward_profiles():
+    df_ward_profiles = pd.read_csv("ward_profiles_cleaned.csv", sep=",", index_col=0)
+    df_train = pd.read_csv("burglary_train.csv", index_col=0)
+
+    print(df_ward_profiles.head())
+
+
+def merge_ward_median():
+    # Read CSV
+    df_median_prices = pd.read_csv("house_median_prices.csv", sep=",", index_col=0)
+    df_ward_profiles = pd.read_csv("ward_profiles_cleaned.csv", sep=",", index_col=0)
+
+    df_median_prices.reset_index(inplace=True)
+    df_ward_profiles.reset_index(inplace=True)
+
+    # Create subset of relevant columns that need to be joined
+    median_prices_subset = df_median_prices[["Ward name", "Below 33%", "Above 66%"]].copy()
+    median_prices_subset.sort_values("Ward name", inplace=True)
+
+    # print(median_prices_subset.head())
+
+    # Copy the relevant columns to ward profiles df since ward names match
+    df_ward_profiles["Below 33%"] = median_prices_subset["Below 33%"]
+    df_ward_profiles["Above 66%"] = median_prices_subset["Above 66%"]
+
+    # print(df_ward_profiles.head(10))
+
+    df_ward_profiles.to_csv("ward_median_house_merged.csv", index=False)
+
+
+merge_ward_median()
