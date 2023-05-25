@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import requests
 
 
 def merge_median_house_prices():
@@ -67,4 +68,23 @@ def merge_ward_median():
     df_ward_profiles.to_csv("ward_median_house_merged.csv", index=False)
 
 
-merge_ward_median()
+def lsoa_to_ward():
+    df_data = pd.read_csv("burglary_data.csv", sep=",", index_col=0)
+
+    df_data["Ward"] = get_ward_from_lsoa(df_data["LSOA code"])
+
+    print(df_data.head())
+
+
+def get_ward_from_lsoa(lsoa_code):
+
+    api_url = 'https://statistics.data.gov.uk/area?areaType=LSOA&areaCode=' + str(lsoa_code)
+    response = requests.get(api_url)
+    data = response.json()
+
+    if 'result' in data:
+        ward_name = data['result']['primaryTopic']['ward']['label']
+        return ward_name
+    else:
+        return None
+
