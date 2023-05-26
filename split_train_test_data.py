@@ -9,7 +9,7 @@ train_percentage = 0.8  # Percentage of train data as a decimal number, test dat
 
 def split_train_test_data(train_percentagex):
     # Import df from csv - already sorted on timestamp so no need to sort
-    df = pd.read_csv("burglary_data.csv")
+    df = pd.read_csv("Final_dataset.csv")
 
     # Convert month to datetime and sort ascending
     # df['Month'] = pd.to_datetime(df['Month'], format="%Y-%m")
