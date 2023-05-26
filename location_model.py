@@ -10,13 +10,13 @@ from statsmodels.graphics.tsaplots import plot_pacf
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
+
 pio.templates.default = "seaborn"
 plt.style.use('seaborn-v0_8-darkgrid')
 from skforecast.ForecasterAutoreg import ForecasterAutoreg
 from skforecast.ForecasterAutoregMultiOutput import ForecasterAutoregMultiOutput
 from skforecast.model_selection import grid_search_forecaster
 from skforecast.model_selection import backtesting_forecaster
-
 
 train_data = pd.read_csv("burglary_train.csv")
 val_data = pd.read_csv("burglary_validation.csv")
@@ -61,30 +61,40 @@ param_grid = {
     'learning_rate': [0.01, 0.1]
 }
 
-#Lags used as predictors
+# Lags used as predictors
 lags_grid = [4, 12, 24, 48, 72]
+
+# Obtaining best model
+x = pd.concat([x_train, x_val])
+y = pd.concat([y_train, y_val])
 
 result_grid = grid_search_forecaster(
     forecaster=forecaster,
-    y=y
+    y=y,
+    param_grid=param_grid,
+    lags_grid=lags_grid,
+    steps=36,
+    refit=False,
+    metric='mean_squared_error',
+    initial_train_size=len(x_train),
+    fixed_train_size=False,
+    return_best=True,
+    verbose=False
+)
+
+# Backtesting test data
+x2 = pd.concat([x, x_test])
+y = pd.concat([y, y_test])
+
+metric, predictions = backtesting_forecaster(
+    forecaster=forecaster,
+    y=y,
+    initial_train_size=len(x),
+    fixed_train_size=False,
+    steps=36,
+    refit=False,
+    metric='mean_squared_error',
+    verbose=False
 )
 
 
-# Train model
-n = 100
-model = xgb.train(
-   params=params,
-   dtrain=dtrain_reg_1,
-   num_boost_round=n,
-)
-
-# Make predictions on the test set
-predictions = model.predict(dtest_reg_1)
-predictions = predictions.astype(int)  # Convert predictions to integers
-
-# Decode label predictions
-predicted_labels = label_encoder.inverse_transform(predictions)
-
-# Evaluate the model
-accuracy = np.mean(predicted_labels == test_data["LSOA name"])
-print(f"Accuracy: {accuracy}")
